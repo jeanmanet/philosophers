@@ -6,14 +6,14 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/10/20 15:11:01 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/10/20 16:25:18 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../includes/philo.h"
 
-int	timestamp(t_data *data)
+long	timestamp(t_data *data)
 {
 	struct timeval tv;
 	long timestamp;
@@ -24,6 +24,15 @@ int	timestamp(t_data *data)
 	return(timestamp - data->start_time);
 }
 
+void	ft_usleep(long time)
+{
+	long	start_time;
+
+	start_time = init_ms();
+	while (init_ms() - start_time < time)
+		usleep(time * 10);
+}
+
 void	*philos_function(void *data)
 {
 	philo		*p;
@@ -31,11 +40,12 @@ void	*philos_function(void *data)
 	p = (philo *)data;
 	d = (t_data *)p->data;
 
-	printf("%dms %d is thinking\n", timestamp(d), p->name);
+	if (p->name % 2)
+		usleep(1000);
 	while (1)
 	{
 		//Tente de prendre les fourchettes seulement s'il a vraiment faim
-		if ((p->ttdie - p->ttsleep) / (2 + p->name) < timestamp(p->data) - p->lunch_time)
+	//	if ((p->ttdie - p->ttsleep) / (2 + p->name) < timestamp(p->data) - p->lunch_time)
 		{
 			pthread_mutex_lock(&p->lfork.mutex);
 			if (p->lfork.isfree == 1)
