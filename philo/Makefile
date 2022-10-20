@@ -6,7 +6,7 @@
 #    By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/18 09:13:00 by jmanet            #+#    #+#              #
-#    Updated: 2022/10/19 09:28:59 by jmanet           ###   ########.fr        #
+#    Updated: 2022/10/20 11:07:17 by jmanet           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ INCLUDES =
 
 CC = gcc
 
-FLAGS = -Wall -Werror -Wextra
+FLAGS = -Wall -Werror -Wextra -g
 
 LIBS = -pthread
 

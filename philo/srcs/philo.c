@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/10/19 13:16:59 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/10/20 15:11:01 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,36 +24,72 @@ int	timestamp(t_data *data)
 	return(timestamp - data->start_time);
 }
 
-void	*routine_function(void *data)
+void	*philos_function(void *data)
 {
 	philo		*p;
 	t_data		*d;
 	p = (philo *)data;
 	d = (t_data *)p->data;
-	//d = (t_data *)data;
 
-	//pthread_mutex_init(&d->mutex, NULL);
-	//count = &d->count;
-	//thread = pthread_self();
-
+	printf("%dms %d is thinking\n", timestamp(d), p->name);
 	while (1)
 	{
-		pthread_mutex_lock(p->mutex);
-		if (p->lfork == 1 && *p->rfork == 1)
+		//Tente de prendre les fourchettes seulement s'il a vraiment faim
+		if ((p->ttdie - p->ttsleep) / (2 + p->name) < timestamp(p->data) - p->lunch_time)
 		{
-			p->lfork = 0;
-			printf("%dms %d has taken a fork\n", timestamp(d), p->name);
-			*p->rfork = 0;
-			printf("%dms %d has taken a fork\n", timestamp(d), p->name);
-			pthread_mutex_unlock(p->mutex);
-			printf("%dms %d start to eat\n", timestamp(d), p->name);
+			pthread_mutex_lock(&p->lfork.mutex);
+			if (p->lfork.isfree == 1)
+			{
+				p->lfork.isfree = 0;
+				p->forkinuse++;
+				printf("%dms %d has taken a fork\n", timestamp(d), p->name);
+			}
+			pthread_mutex_unlock(&p->lfork.mutex);
+
+			//Taking the right Fork
+			pthread_mutex_lock(&p->rfork->mutex);
+			if (p->rfork->isfree == 1)
+			{
+				p->rfork->isfree = 0;
+				p->forkinuse++;
+				printf("%dms %d has taken a fork\n", timestamp(d), p->name);
+			}
+			pthread_mutex_unlock(&p->rfork->mutex);
+		}
+
+		//Se met a manger si il a deux fourchettes.
+		if (p->forkinuse == 2)
+		{
+			printf("%dms %d is eating\n", timestamp(d), p->name);
+			p->lunch_time = timestamp(d);
 			usleep(p->tteat * 1000);
 			p->lunch_time = timestamp(d);
-			pthread_mutex_lock(p->mutex);
+		//Repose ses fourchettes
+			pthread_mutex_lock(&p->lfork.mutex);
+			p->lfork.isfree = 1;
+			pthread_mutex_unlock(&p->lfork.mutex);
+			p->forkinuse--;
+			pthread_mutex_lock(&p->rfork->mutex);
+			p->rfork->isfree = 1;
+			pthread_mutex_unlock(&p->rfork->mutex);
+			p->forkinuse--;
+		//Et se met a dormir
+			printf("%dms %d is sleeping\n", timestamp(d), p->name);
+			usleep(p->ttsleep * 1000);
+		//Se reveille et se met a penser
+			printf("%dms %d is thinking\n", timestamp(d), p->name);
+		}
+		/*
+			pthread_mutex_unlock(p->rmutex);
+
+			p->lunch_time = timestamp(d);
+			pthread_mutex_lock(&p->mutex);
+			pthread_mutex_lock(p->rmutex);
 			p->lfork = 1;
 			*p->rfork = 1;
-			pthread_mutex_unlock(p->mutex);
-		}
+			pthread_mutex_unlock(&p->mutex);
+			pthread_mutex_unlock(p->rmutex);
+		*/
 	}
 
 	return (NULL);
@@ -103,18 +139,22 @@ int	main(int argc, char **argv)
 	while (i < data.nbphilos)
 	{
 		data.philosopher[i].name = i + 1;
-		data.philosopher[i].lfork = 1;
+		data.philosopher[i].lfork.isfree = 1;
 		if (i == 0)
+		{
 			data.philosopher[i].rfork = &data.philosopher[data.nbphilos - 1].lfork;
+		}
 		else
+		{
 			data.philosopher[i].rfork = &data.philosopher[i - 1].lfork;
+		}
 		data.philosopher[i].ttdie = ft_atoi(argv[2]);
 		data.philosopher[i].tteat = ft_atoi(argv[3]);
 		data.philosopher[i].ttsleep = ft_atoi(argv[4]);
-		data.philosopher[i].mutex = &data.mutex;
 		data.philosopher[i].data = &data;
 		data.philosopher[i].lunch_time = 0;
-		pthread_create(&data.philosopher[i].thread, NULL, routine_function, &data.philosopher[i]);
+		data.philosopher[i].forkinuse = 0;
+		pthread_create(&data.philosopher[i].thread, NULL, philos_function, &data.philosopher[i]);
 		i++;
 	}
 
