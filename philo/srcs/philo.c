@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/10/20 16:25:18 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/10/23 19:34:55 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@ long	timestamp(t_data *data)
 	return(timestamp - data->start_time);
 }
 
-void	ft_usleep(long time)
+void	ft_usleep(long time, t_data *data)
 {
 	long	start_time;
 
-	start_time = init_ms();
-	while (init_ms() - start_time < time)
+	start_time = timestamp(data);
+	while (timestamp(data) - start_time < time)
 		usleep(time * 10);
 }
 
@@ -41,7 +41,7 @@ void	*philos_function(void *data)
 	d = (t_data *)p->data;
 
 	if (p->name % 2)
-		usleep(1000);
+		ft_usleep(1, d);
 	while (1)
 	{
 		//Tente de prendre les fourchettes seulement s'il a vraiment faim
@@ -52,7 +52,7 @@ void	*philos_function(void *data)
 			{
 				p->lfork.isfree = 0;
 				p->forkinuse++;
-				printf("%dms %d has taken a fork\n", timestamp(d), p->name);
+				printf("%ldms %d has taken a fork\n", timestamp(d), p->name);
 			}
 			pthread_mutex_unlock(&p->lfork.mutex);
 
@@ -62,17 +62,16 @@ void	*philos_function(void *data)
 			{
 				p->rfork->isfree = 0;
 				p->forkinuse++;
-				printf("%dms %d has taken a fork\n", timestamp(d), p->name);
+				printf("%ldms %d has taken a fork\n", timestamp(d), p->name);
 			}
 			pthread_mutex_unlock(&p->rfork->mutex);
 		}
 
-		//Se met a manger si il a deux fourchettes.
+		//Se met a manger s'il a deux fourchettes.
 		if (p->forkinuse == 2)
 		{
-			printf("%dms %d is eating\n", timestamp(d), p->name);
-			p->lunch_time = timestamp(d);
-			usleep(p->tteat * 1000);
+			printf("%ldms %d is eating\n", timestamp(d), p->name);
+			ft_usleep(p->tteat, d);
 			p->lunch_time = timestamp(d);
 		//Repose ses fourchettes
 			pthread_mutex_lock(&p->lfork.mutex);
@@ -84,22 +83,11 @@ void	*philos_function(void *data)
 			pthread_mutex_unlock(&p->rfork->mutex);
 			p->forkinuse--;
 		//Et se met a dormir
-			printf("%dms %d is sleeping\n", timestamp(d), p->name);
-			usleep(p->ttsleep * 1000);
+			printf("%ldms %d is sleeping\n", timestamp(d), p->name);
+			ft_usleep(p->ttsleep, d);
 		//Se reveille et se met a penser
-			printf("%dms %d is thinking\n", timestamp(d), p->name);
+			printf("%ldms %d is thinking\n", timestamp(d), p->name);
 		}
-		/*
-			pthread_mutex_unlock(p->rmutex);
-
-			p->lunch_time = timestamp(d);
-			pthread_mutex_lock(&p->mutex);
-			pthread_mutex_lock(p->rmutex);
-			p->lfork = 1;
-			*p->rfork = 1;
-			pthread_mutex_unlock(&p->mutex);
-			pthread_mutex_unlock(p->rmutex);
-		*/
 	}
 
 	return (NULL);
@@ -118,7 +106,7 @@ void	*control_function(void *data)
 		{
 			if (timestamp(d) > (d->philosopher[i].lunch_time + d->philosopher->ttdie))
 			{
-				printf("%dms %d died\n", timestamp(d) ,d->philosopher[i].name);
+				printf("%ldms %d died\n", timestamp(d) ,d->philosopher[i].name);
 				exit(0);
 			}
 			i++;
