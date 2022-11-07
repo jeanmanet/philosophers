@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 09:17:19 by jmanet            #+#    #+#             */
-/*   Updated: 2022/10/19 09:30:44 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/07 16:56:54 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,24 @@ int	ft_atoi(const char *nptr)
 		i++;
 	}
 	return (nb * sign);
+}
+
+long	timestamp(t_data *data)
+{
+	struct timeval tv;
+	long timestamp;
+
+	gettimeofday(&tv, NULL);
+	timestamp = (tv.tv_sec * 1000) + (tv.tv_usec/1000);
+
+	return(timestamp - data->start_time);
+}
+
+void	ft_usleep(long time, t_data *data)
+{
+	long	start_time;
+
+	start_time = timestamp(data);
+	while (timestamp(data) - start_time < time)
+		usleep(time * 10);
 }
