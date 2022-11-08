@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/08 16:24:52 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/08 16:31:07 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,22 +41,22 @@ void	ft_take_forks(t_philo *p)
 	t_data	*d;
 
 	d = (t_data *)p->data;
-	pthread_mutex_lock(&p->lfork.mutex);
 	if (p->lfork.isfree == 1)
 	{
+		pthread_mutex_lock(&p->lfork.mutex);
 		p->lfork.isfree = 0;
+		pthread_mutex_unlock(&p->lfork.mutex);
 		p->forkinuse++;
 		printf("%ldms %d has taken a fork\n", timestamp(d), p->name);
 	}
-	pthread_mutex_unlock(&p->lfork.mutex);
-	pthread_mutex_lock(&p->rfork->mutex);
 	if (p->rfork->isfree == 1)
 	{
+		pthread_mutex_lock(&p->rfork->mutex);
 		p->rfork->isfree = 0;
+		pthread_mutex_unlock(&p->rfork->mutex);
 		p->forkinuse++;
 		printf("%ldms %d has taken a fork\n", timestamp(d), p->name);
 	}
-	pthread_mutex_unlock(&p->rfork->mutex);
 }
 
 void	*philos_function(void *data)
