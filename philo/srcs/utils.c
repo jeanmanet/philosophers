@@ -6,69 +6,56 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 09:17:19 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/07 16:56:54 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/08 11:57:17 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-int	ft_isspace(int c)
-{
-	if (c == ' ' || c == '\t' || c == '\n')
-		return (1);
-	else if (c == '\r' || c == '\v' || c == '\f')
-		return (1);
-	return (0);
-}
-
-int	ft_isdigit(char c)
-{
-	if (c >= '0' && c <= '9')
-		return (1);
-	return (0);
-}
-
-int	ft_atoi(const char *nptr)
-{
-	int	i;
-	int	sign;
-	int	nb;
-
-	i = 0;
-	sign = 1;
-	nb = 0;
-	while (ft_isspace(nptr[i]))
-		i++;
-	if (nptr[i] == '-' || nptr[i] == '+')
-	{
-		if (nptr[i] == '-')
-			sign = -sign;
-		i++;
-	}
-	while (ft_isdigit(nptr[i]))
-	{
-		nb = (nb * 10) + (nptr[i] - '0');
-		i++;
-	}
-	return (nb * sign);
-}
-
 long	timestamp(t_data *data)
 {
-	struct timeval tv;
-	long timestamp;
+	struct timeval	tv;
+	long			timestamp;
 
 	gettimeofday(&tv, NULL);
-	timestamp = (tv.tv_sec * 1000) + (tv.tv_usec/1000);
-
-	return(timestamp - data->start_time);
+	timestamp = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+	return (timestamp - data->start_time);
 }
 
-void	ft_usleep(long time, t_data *data)
+void	ft_usleep(long time, t_philo *p)
 {
 	long	start_time;
+	t_data	*d;
 
-	start_time = timestamp(data);
-	while (timestamp(data) - start_time < time)
-		usleep(time * 10);
+	d = p->data;
+	start_time = timestamp(d);
+	while (timestamp(d) - start_time < time)
+	{
+		if (timestamp(d) >= (p->lunch_time + d->ttdie))
+		{
+			printf("%ldms %d died\n", timestamp(d), p->name);
+			exit (0);
+		}
+		usleep(100);
+	}
+}
+
+void	ft_exit(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->nbphilos)
+	{
+		pthread_exit(data->philosopher[i].thread);
+		pthread_mutex_destroy(&data->philosopher[i].lfork.mutex);
+		i++;
+	}
+	free(data->philosopher);
+}
+
+void	ft_exit_error_thread(t_data *d)
+{
+	printf("Error : Thread creation failed\n");
+	ft_exit(d);
 }

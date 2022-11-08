@@ -6,13 +6,13 @@
 #    By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/18 09:13:00 by jmanet            #+#    #+#              #
-#    Updated: 2022/11/07 16:58:34 by jmanet           ###   ########.fr        #
+#    Updated: 2022/11/08 10:15:27 by jmanet           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
-SRCS = srcs/philo.c srcs/utils.c
+SRCS = srcs/philo.c srcs/utils.c srcs/atoi.c
 
 INCLUDES =
 

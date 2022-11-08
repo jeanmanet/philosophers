@@ -6,20 +6,19 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/07 16:57:36 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/08 11:53:15 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../includes/philo.h"
 
-void	ft_eat(philo *p)
+void	ft_eat(t_philo *p)
 {
-	t_data *d;
+	t_data	*d;
 
-	d = (t_data*)p->data;
+	d = (t_data *)p->data;
 	printf("%ldms %d is eating\n", timestamp(d), p->name);
-	ft_usleep(d->tteat, d);
+	ft_usleep(d->tteat, p);
 	p->lunch_time = timestamp(d);
 	pthread_mutex_lock(&p->lfork.mutex);
 	p->lfork.isfree = 1;
@@ -30,21 +29,18 @@ void	ft_eat(philo *p)
 	pthread_mutex_unlock(&p->rfork->mutex);
 	p->forkinuse--;
 	p->nb_lumch++;
-	if (timestamp(d) < (p->lunch_time + d->ttdie))
-	{
-		printf("%ldms %d is sleeping\n", timestamp(d), p->name);
-		ft_usleep(d->ttsleep, d);
-	}
-	if (timestamp(d) < (p->lunch_time + d->ttdie))
-		printf("%ldms %d is thinking\n", timestamp(d), p->name);
+	if (p->nb_lumch == d->nb_must_eat)
+		d->fullphilos++;
+	printf("%ldms %d is sleeping\n", timestamp(d), p->name);
+	ft_usleep(d->ttsleep, p);
+	printf("%ldms %d is thinking\n", timestamp(d), p->name);
 }
 
-void	ft_take_forks(philo *p)
+void	ft_take_forks(t_philo *p)
 {
-	t_data *d;
+	t_data	*d;
 
-	d = (t_data*)p->data;
-
+	d = (t_data *)p->data;
 	pthread_mutex_lock(&p->lfork.mutex);
 	if (p->lfork.isfree == 1)
 	{
@@ -53,8 +49,6 @@ void	ft_take_forks(philo *p)
 		printf("%ldms %d has taken a fork\n", timestamp(d), p->name);
 	}
 	pthread_mutex_unlock(&p->lfork.mutex);
-
-	//Taking the right Fork
 	pthread_mutex_lock(&p->rfork->mutex);
 	if (p->rfork->isfree == 1)
 	{
@@ -67,60 +61,46 @@ void	ft_take_forks(philo *p)
 
 void	*philos_function(void *data)
 {
-	philo		*p;
+	t_philo		*p;
 	t_data		*d;
-	p = (philo *)data;
-	d = (t_data *)p->data;
 
-	if (p->name % 2)
-		ft_usleep(1, d);
+	p = (t_philo *)data;
+	d = (t_data *)p->data;
+	pthread_mutex_init(&p->lfork.mutex, NULL);
+	p->lfork.isfree = 1;
 	p->nb_lumch = 0;
-	while (p->nb_lumch != d->nb_must_eat && timestamp(d) < (p->lunch_time + d->ttdie))
+	p->lunch_time = 0;
+	if (p->name % 2)
+		ft_usleep(1, p);
+	while (p->nb_lumch != d->nb_must_eat)
 	{
-		//Tente de prendre les fourchettes
 		ft_take_forks(p);
-		//Se met a manger s'il a deux fourchettes.
 		if (p->forkinuse == 2)
 			ft_eat(p);
+		ft_usleep(1, p);
 	}
-	d->nbfullphilos++;
+	while (d->fullphilos != d->nbphilos)
+		ft_usleep(1, p);
 	return (NULL);
 }
-
-
-void	*control_function(void *data)
-{
-	int		i;
-	t_data	*d;
-
-	i = 0;
-	d = (t_data*)data;
-	while (d->nbfullphilos != d->nbphilos)
-	{
-		while (i < d->nbphilos)
-		{
-			if (timestamp(d) > (d->philosopher[i].lunch_time + d->ttdie))
-			{
-				printf("%ldms %d died\n", timestamp(d) ,d->philosopher[i].name);
-				//system("leaks philo");
-				exit(0);
-			}
-			i++;
-		}
-		i = 0;
-	}
-	return (NULL);
-}
-
 
 void	data_init(t_data *data, int argc, char **argv)
 {
-	(void)argc;
-	data->nbfullphilos = 0;
+	if (argc < 5 || argc > 6)
+	{
+		printf("Error : Incorrect number of arguments\n");
+		exit (0);
+	}
 	data->start_time = 0;
 	data->start_time = timestamp(data);
 	data->nbphilos = ft_atoi(argv[1]);
-	data->philosopher = malloc(sizeof(philo) * data->nbphilos);
+	if (data->nbphilos < 1)
+	{
+		printf("Error : There must be at leat one philosopher !\n");
+		exit(0);
+	}
+	data->fullphilos = 0;
+	data->philosopher = malloc(sizeof(t_philo) * data->nbphilos);
 	data->ttdie = ft_atoi(argv[2]);
 	data->tteat = ft_atoi(argv[3]);
 	data->ttsleep = ft_atoi(argv[4]);
@@ -131,31 +111,27 @@ void	data_init(t_data *data, int argc, char **argv)
 
 int	main(int argc, char **argv)
 {
-	int		i = 0;
-	t_data	data;
-	pthread_t supervisor;
+	int		i;
+	int		ret;
+	t_data	d;
 
-	data_init(&data, argc, argv);
-	if (data.nbphilos < 0)
-		return(0);
-	while (i < data.nbphilos)
+	i = 0;
+	data_init(&d, argc, argv);
+	while (i < d.nbphilos)
 	{
-		data.philosopher[i].name = i + 1;
-		data.philosopher[i].lfork.isfree = 1;
-		pthread_mutex_init(&data.philosopher[i].lfork.mutex, NULL);
+		d.philosopher[i].name = i + 1;
 		if (i == 0)
-			data.philosopher[i].rfork = &data.philosopher[data.nbphilos - 1].lfork;
+			d.philosopher[i].rfork = &d.philosopher[d.nbphilos - 1].lfork;
 		else
-			data.philosopher[i].rfork = &data.philosopher[i - 1].lfork;
-		data.philosopher[i].data = &data;
-		data.philosopher[i].lunch_time = 0;
-		pthread_create(&data.philosopher[i].thread, NULL, philos_function, &data.philosopher[i]);
-		pthread_detach(data.philosopher[i].thread);
+			d.philosopher[i].rfork = &d.philosopher[i - 1].lfork;
+		d.philosopher[i].data = &d;
+		ret = pthread_create(&d.philosopher[i].thread, NULL, philos_function,
+				&d.philosopher[i]);
+		if (ret != 0)
+			ft_exit_error_thread(&d);
 		i++;
 	}
-	pthread_create(&supervisor, NULL, control_function, &data);
-	pthread_join(supervisor, NULL);
-
-	//system("leaks philo");
+	pthread_join(d.philosopher[0].thread, NULL);
+	ft_exit(&d);
 	return (0);
 }
