@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/08 11:53:15 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/08 16:24:52 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,8 @@ int	main(int argc, char **argv)
 			ft_exit_error_thread(&d);
 		i++;
 	}
-	pthread_join(d.philosopher[0].thread, NULL);
+	while (i-- <= 0)
+		pthread_join(d.philosopher[i].thread, NULL);
 	ft_exit(&d);
 	return (0);
 }
