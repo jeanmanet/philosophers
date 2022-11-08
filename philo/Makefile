@@ -6,7 +6,7 @@
 #    By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/18 09:13:00 by jmanet            #+#    #+#              #
-#    Updated: 2022/11/08 18:09:58 by jmanet           ###   ########.fr        #
+#    Updated: 2022/11/08 18:55:31 by jmanet           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,9 @@ CC = gcc
 FLAGS = -Wall -Werror -Wextra -g
 
 LIBS = -pthread
+
+.c.o:
+	${CC} -I ${INCLUDES} ${FLAGS} -c $< -o ${<:.c=.o}
 
 OBJS = ${SRCS:.c=.o}
 
