@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:39 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/08 11:52:59 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/08 16:58:23 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@
 # include <unistd.h>
 # include <stdlib.h>
 
-typedef struct d_data
+typedef struct t_fork
 {
 	pthread_mutex_t	mutex;
 	int				isfree;
 }	t_fork;
 
-typedef struct p_data
+typedef struct t_philo
 {
 	pthread_t	thread;
 	t_fork		lfork;
