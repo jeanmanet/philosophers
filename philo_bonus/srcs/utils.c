@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 09:17:19 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/10 15:53:03 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/10 18:50:00 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,29 +34,35 @@ void	ft_usleep(long time, t_philo *p)
 		if (timestamp(d) >= (p->lunch_time + d->ttdie))
 		{
 			printf("%ldms %d died\n", timestamp(d), p->name);
-			sem_unlink(d->semname);
-			exit (0);
+			//sem_unlink(d->semname);
+			ft_exit(d);
 		}
 		usleep(100);
 	}
 }
 
-void	ft_exit(t_data *data)
+void	ft_waitprocessus(t_data *data)
 {
 	int	i;
 
 	i = 0;
 	while (i < data->nbphilos)
 	{
-		pthread_exit(data->philosopher[i].thread);
+		waitpid(data->philosopher[i].pid, NULL, 0);
+		if (timestamp(data) >= (data->philosopher[i].lunch_time + data->ttdie))
+			ft_exit(data);
 		i++;
 	}
-	free(data->philosopher);
-	sem_unlink(data->semname);
 }
 
-void	ft_exit_error_thread(t_data *d)
+
+void	ft_exit(t_data *data)
 {
-	printf("Error : Thread creation failed\n");
-	ft_exit(d);
+	int	i;
+
+	i = 0;
+	sem_close(data->forks);
+	sem_unlink(data->semname);
+	free(data->philosopher);
+	exit (0);
 }
