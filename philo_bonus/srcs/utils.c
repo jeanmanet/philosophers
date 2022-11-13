@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 09:17:19 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/10 18:50:00 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/13 19:35:13 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	ft_usleep(long time, t_philo *p)
 		if (timestamp(d) >= (p->lunch_time + d->ttdie))
 		{
 			printf("%ldms %d died\n", timestamp(d), p->name);
-			//sem_unlink(d->semname);
 			ft_exit(d);
 		}
 		usleep(100);
@@ -54,7 +53,6 @@ void	ft_waitprocessus(t_data *data)
 		i++;
 	}
 }
-
 
 void	ft_exit(t_data *data)
 {

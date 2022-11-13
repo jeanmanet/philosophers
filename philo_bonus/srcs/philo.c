@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/10 18:47:53 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/13 19:36:16 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@ void	ft_take_forks(t_philo *p)
 
 	d = p->data;
 	sem_wait(d->forks);
-		p->forkinuse++;
-		printf("%ldms %d has taken a fork\n", timestamp(d), p->name);
+	p->forkinuse++;
+	printf("%ldms %d has taken a fork\n", timestamp(d), p->name);
 	if (d->nbphilos != 1)
 	{
-	sem_wait(d->forks);
+		sem_wait(d->forks);
 		p->forkinuse++;
 		printf("%ldms %d has taken a fork\n", timestamp(d), p->name);
 	}
@@ -112,7 +112,7 @@ int	main(int argc, char **argv)
 		{
 			d.philosopher[i].name = i + 1;
 			d.philosopher[i].data = &d;
-		philos_function(&d.philosopher[i]);
+			philos_function(&d.philosopher[i]);
 		}
 		i++;
 	}

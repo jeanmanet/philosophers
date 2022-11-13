@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:39 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/10 18:38:25 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/13 19:36:53 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@
 # include <semaphore.h>
 # include <fcntl.h>
 # include <sys/stat.h>
-#include <pthread.h>
-
 
 typedef struct p_data
 {
@@ -53,6 +51,5 @@ long	timestamp(t_data *data);
 void	ft_usleep(long time, t_philo *p);
 void	ft_exit(t_data *data);
 void	ft_waitprocessus(t_data *data);
-
 
 #endif
