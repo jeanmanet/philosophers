@@ -6,11 +6,11 @@
 #    By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/18 09:13:00 by jmanet            #+#    #+#              #
-#    Updated: 2022/11/10 17:17:35 by jmanet           ###   ########.fr        #
+#    Updated: 2022/11/14 11:17:08 by jmanet           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = philo
+NAME = philo_bonus
 
 SRCS = srcs/philo.c srcs/utils.c srcs/atoi.c
 
@@ -18,7 +18,7 @@ INCLUDES =
 
 CC = gcc
 
-FLAGS = -Wall -Werror -Wextra -g
+FLAGS = -Wall -Werror -Wextra
 
 LIBS = -pthread
 

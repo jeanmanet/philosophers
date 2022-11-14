@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 09:17:19 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/13 19:35:13 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/14 11:11:35 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,11 @@ void	ft_exit(t_data *data)
 	sem_close(data->forks);
 	sem_unlink(data->semname);
 	free(data->philosopher);
+	exit (0);
+}
+
+void	ft_exit_error(char *str)
+{
+	printf("Error : %s\n", str);
 	exit (0);
 }
