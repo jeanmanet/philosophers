@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/14 10:35:46 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/14 11:03:02 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,26 +87,29 @@ void	*philos_function(void *data)
 void	data_init(t_data *data, int argc, char **argv)
 {
 	if (argc < 5 || argc > 6)
-	{
-		printf("Error : Incorrect number of arguments\n");
-		exit (0);
-	}
+		ft_exit_error("Incorrect number of arguments");
 	data->start_time = 0;
 	data->start_time = timestamp(data);
 	data->nbphilos = ft_atoi(argv[1]);
-	if (data->nbphilos < 1)
-	{
-		printf("Error : There must be at leat one philosopher !\n");
-		exit(0);
-	}
-	data->fullphilos = 0;
-	data->philosopher = malloc(sizeof(t_philo) * data->nbphilos);
 	data->ttdie = ft_atoi(argv[2]);
 	data->tteat = ft_atoi(argv[3]);
 	data->ttsleep = ft_atoi(argv[4]);
+	if (data->nbphilos < 1)
+		ft_exit_error("There must be at leat one philosopher !");
+	if (data->ttdie < 0 || data->tteat < 0 || data->ttsleep < 0)
+		ft_exit_error("time to eat, sleep or think can't be negative");
+	data->fullphilos = 0;
+	data->philosopher = malloc(sizeof(t_philo) * data->nbphilos);
+	if (!data->philosopher)
+		ft_exit_error("Memory allocation error");
 	data->nb_must_eat = -1;
 	if (argc == 6)
-		data->nb_must_eat = ft_atoi(argv[5]);
+	{
+		if (atoi(argv[5]) > 0)
+			data->nb_must_eat = ft_atoi(argv[5]);
+		else
+			ft_exit_error("Nb philosopher must eat should be 1 minimum");
+	}
 }
 
 int	main(int argc, char **argv)

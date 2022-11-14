@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 09:17:19 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/08 11:57:17 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/14 10:45:56 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,10 @@ void	ft_exit_error_thread(t_data *d)
 {
 	printf("Error : Thread creation failed\n");
 	ft_exit(d);
+}
+
+void	ft_exit_error(char *str)
+{
+	printf("Error : %s\n", str);
+	exit (0);
 }

@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:39 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/08 16:58:23 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/14 10:46:19 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,6 @@ long	timestamp(t_data *data);
 void	ft_usleep(long time, t_philo *p);
 void	ft_exit(t_data *data);
 void	ft_exit_error_thread(t_data *d);
+void	ft_exit_error(char *str);
 
 #endif
