@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:39 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/14 11:12:20 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/14 12:46:16 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <semaphore.h>
 # include <fcntl.h>
 # include <sys/stat.h>
+# include <signal.h>
 
 typedef struct p_data
 {

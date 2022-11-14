@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/14 12:16:18 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/14 13:07:51 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	philos_function(t_philo *p)
 			ft_eat(p);
 		ft_usleep(1, p);
 	}
-	ft_exit(d);
+	ft_exit (0);
 }
 
 void	data_init(t_data *data, int argc, char **argv)
@@ -97,7 +97,7 @@ void	data_init(t_data *data, int argc, char **argv)
 		else
 			ft_exit_error("Nb philosopher must eat should be 1 minimum");
 	}
-	data->semname = "forks42";
+	data->semname = "forks42philosophers";
 }
 
 int	main(int argc, char **argv)
@@ -108,6 +108,7 @@ int	main(int argc, char **argv)
 
 	i = 0;
 	data_init(&d, argc, argv);
+	sem_unlink(d.semname);
 	d.forks = sem_open(d.semname, O_CREAT, 0777, d.nbphilos);
 	while (i < d.nbphilos)
 	{
