@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/08 16:31:07 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/14 10:35:46 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	*philos_function(void *data)
 	p->nb_lumch = 0;
 	p->lunch_time = 0;
 	if (p->name % 2)
-		ft_usleep(1, p);
+		ft_usleep(5, p);
 	while (p->nb_lumch != d->nb_must_eat)
 	{
 		ft_take_forks(p);
