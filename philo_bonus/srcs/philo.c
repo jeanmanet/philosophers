@@ -6,7 +6,7 @@
 /*   By: jmanet <jmanet@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/18 09:30:03 by jmanet            #+#    #+#             */
-/*   Updated: 2022/11/14 11:14:46 by jmanet           ###   ########.fr       */
+/*   Updated: 2022/11/14 12:14:30 by jmanet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void	philos_function(t_philo *p)
 	d = (t_data *)p->data;
 	p->nb_lumch = 0;
 	p->lunch_time = 0;
+	p->forkinuse =0;
 	if (p->name % 2)
 		ft_usleep(5, p);
 	while (p->nb_lumch != d->nb_must_eat)
@@ -96,7 +97,7 @@ void	data_init(t_data *data, int argc, char **argv)
 		else
 			ft_exit_error("Nb philosopher must eat should be 1 minimum");
 	}
-	data->semname = "forks";
+	data->semname = "forks42";
 }
 
 int	main(int argc, char **argv)
